@@ -37,7 +37,7 @@ private func fetchIpd(_ id: Int) -> ImageProcessedData{
 
 // MARK: Reference Table for Swift when Python calls
 private var referenceTable: [Int: ImageProcessedData] = {
-    print("Acclerated by face.dylib version \(VERSION) 🚀")
+    print("Accelerated by face.dylib version \(VERSION) 🚀")
     return [:]
 }()
 
@@ -93,6 +93,11 @@ public func ipd_batch_faces(_ ids: CString) -> CString{
     }
     
     return CString(BATCH_FaceImagesRAW64(array: arrayOfFaces))
+}
+
+@_cdecl("mem_dealloc_ipd")
+public func funcmem_dealloc_ipd(_ id: Int){
+    _ = referenceTable.removeValue(forKey: id)
 }
 
 
