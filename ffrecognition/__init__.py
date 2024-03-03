@@ -18,4 +18,3 @@ def euclidian_distance(face1: Swift_FaceImage, face2: Swift_FaceImage) -> float:
                 raise UnableToCompareFacesError('Face not detected in image: {}'.format(enc))
 
      return fr.face_distance([face1_encodings], face2_encodings)[0]
-
