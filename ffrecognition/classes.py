@@ -5,7 +5,6 @@ import json
 import base64
 import os.path
 import tempfile
-
 import face_recognition
 from ffrecognition import _bindings as swift_bindings
 from ffrecognition import _private_classes as _private_cls
@@ -14,22 +13,35 @@ class Swift_FaceImage:
     """An Image containing a single face extracted from the original image. All image data is PNG format."""
     def __init__(self, binary_data_encoded: str):
         self._data = base64.b64decode(binary_data_encoded)
+        self._frImage = None
 
     def save(self, path: str):
         with open(path, "wb") as file:
             file.write(self._data)
 
-    @property
-    def fr_encodings(self):
-        """Returns the face_recognition encodings for the face image."""
+    def _convertToFr(self):
         named_temp_file = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
         self.save(named_temp_file.name)
         loaded_image = face_recognition.load_image_file(named_temp_file.name)
-        image_dimensions = loaded_image.shape
-        known_face_locations = [(0, image_dimensions[1], image_dimensions[0], 0)]
+        self._frImage = loaded_image
         os.unlink(named_temp_file.name)
+        return
+
+    @property
+    def frImage(self):
+        if self._frImage is None:
+            self._convertToFr()
+
+        return self._frImage
+
+    @property
+    def fr_encodings(self):
+        """Returns the face_recognition encodings for the face image."""
+        image_dimensions = self.frImage.shape
+        known_face_locations = [(0, image_dimensions[1], image_dimensions[0], 0)]
+
         try:
-            return face_recognition.face_encodings(loaded_image, known_face_locations)[0]
+            return face_recognition.face_encodings(self.frImage, known_face_locations)[0]
         except IndexError:
             return None
 
