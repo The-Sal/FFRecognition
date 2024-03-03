@@ -7,8 +7,8 @@ import os.path
 import tempfile
 
 import face_recognition
-from FFRecognition import _bindings as swift_bindings
-from FFRecognition import _private_classes as _private_cls
+from ffrecognition import _bindings as swift_bindings
+from ffrecognition import _private_classes as _private_cls
 
 class Swift_FaceImage:
     """An Image containing a single face extracted from the original image. All image data is PNG format."""

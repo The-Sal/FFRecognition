@@ -41,7 +41,7 @@ def generate_bindings(dylib_path: str):
     subprocess.check_call([
         'PySiGen',
         _filesDir,
-        __file__.replace('generate_bindings.py', 'FFRecognition/_bindings.py'),
+        __file__.replace('generate_bindings.py', 'ffrecognition/_bindings.py'),
         '-d', dylib_path
     ])
 
@@ -55,7 +55,7 @@ def main():
     _application_support_func = cdll._install_application_support
     _application_support_func.restype = ctypes.c_char_p
 
-    application_support = os.path.join(_application_support_func().decode(), 'FFRecognition')
+    application_support = os.path.join(_application_support_func().decode(), 'ffrecognition')
 
     try:
         os.mkdir(application_support)

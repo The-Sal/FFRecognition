@@ -13,7 +13,7 @@ import Cocoa
 
 private let VERSION  = 0.1
 
-// MARK: Functions used by the FFRecognition Library to install
+// MARK: Functions used by the ffrecognition Library to install
 @_cdecl("_install_application_support")
 public func _install_application_support() -> CString{
     let appSupports = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)

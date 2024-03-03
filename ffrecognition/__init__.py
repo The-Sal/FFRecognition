@@ -1,12 +1,12 @@
 """Fast Face Recognition Library for Python built with face.dylib"""
 try:
-    from FFRecognition import _bindings
+    from ffrecognition import _bindings
 except ImportError:
     raise ImportError('Bindings not found. Did you forget to run generate_bindings.py?')
 
 import face_recognition as fr
-from FFRecognition.exceptions import *
-from FFRecognition.classes import Swift_Image, Swift_FaceImage, BATCH_METHODS
+from ffrecognition.exceptions import *
+from ffrecognition.classes import Swift_Image, Swift_FaceImage, BATCH_METHODS
 
 def euclidian_distance(face1: Swift_FaceImage, face2: Swift_FaceImage) -> float:
      """Returns the euclidian distance between two face images"""
