@@ -178,7 +178,7 @@ The test file can found in the `tests` directory. under the name `_speed_test.py
 
 ## Contributing
 
-Contributions to FFRecognition are welcome! If you encounter any issues or have suggestions for improvements, please open an issue or submit a pull request on the [GitHub repository](link/to/github/repo).
+Contributions to FFRecognition are welcome! If you encounter any issues or have suggestions for improvements, please open an issue or submit a pull request on the [GitHub repository](https://github.com/The-Sal/FFRecognition/pulls).
 
 ## Acknowledgments
 
