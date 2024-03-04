@@ -8,8 +8,8 @@ import face_recognition as fr
 from ffrecognition.exceptions import *
 from ffrecognition.classes import Swift_Image, Swift_FaceImage, BATCH_METHODS
 
-def euclidian_distance(face1: Swift_FaceImage, face2: Swift_FaceImage) -> float:
-     """Returns the euclidian distance between two face images"""
+def euclidean_distance(face1: Swift_FaceImage, face2: Swift_FaceImage) -> float:
+     """Returns the euclidean_distance distance between two face images"""
      face1_encodings = face1.fr_encodings
      face2_encodings = face2.fr_encodings
      encs = [face1, face2]

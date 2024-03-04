@@ -46,7 +46,7 @@ You only have to generate the bindings once, the library will use the generated 
 Here's a simple example of how to use FFRecognition:
 
 ```python
-from ffrecognition import Swift_Image, euclidian_distance
+from ffrecognition import Swift_Image, euclidean_distance
 
 # Initialize an image
 image = Swift_Image("/path/to/your/image.jpg")
