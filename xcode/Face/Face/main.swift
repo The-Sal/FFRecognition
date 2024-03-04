@@ -11,7 +11,7 @@ import Foundation
 import Cocoa
 
 
-private let VERSION  = 0.1
+private let VERSION  = 1.5
 
 // MARK: Functions used by the ffrecognition Library to install
 @_cdecl("_install_application_support")
@@ -37,7 +37,7 @@ private func fetchIpd(_ id: Int) -> ImageProcessedData{
 
 // MARK: Reference Table for Swift when Python calls
 private var referenceTable: [Int: ImageProcessedData] = {
-    print("Accelerated by face.dylib version \(VERSION) 🚀")
+    print("Acclerated by face.dylib version \(VERSION) 🚀")
     return [:]
 }()
 
@@ -56,17 +56,38 @@ public func ipd_init_image(_ imagePath: CString) -> Int{
 }
 
 
+
+
+
+
 @_cdecl("ipd_batch_init_image")
-public func ipd_batch_init_image(_ paths: CString) -> CString{
+public func ipd_batch_init_image(_ paths: CString) -> CString {
     let object = try! JSONDecoder().decode(BATCH_ImagePaths.self, from: paths.toString().data(using: .utf8)!)
+    
+    let batchSize = 5
     var ids: [Int] = []
-    for path in object.paths{
-        ids.append(ipd_init_image(.init(path)))
+    let group = DispatchGroup()
+    let queue = DispatchQueue.global(qos: .userInitiated)
+    
+    let chunks = object.paths.chunked(into: batchSize)
+    
+    for chunk in chunks {
+        group.enter()
+        queue.async {
+            let chunkIds = chunk.map { ipd_init_image(.init($0)) }
+            ids.append(contentsOf: chunkIds)
+            group.leave()
+        }
     }
+    
+    group.wait() // Wait for all tasks to complete
     
     let returnObject = BATCH_ImageIds(ids: ids)
     return CString(returnObject)
 }
+
+
+
 
 
 // Returns the images of faces as base64 encoded strings in a JSON array
@@ -83,21 +104,36 @@ public func ipd_faces(id: Int) -> CString{
 }
 
 @_cdecl("ipd_batch_faces")
-public func ipd_batch_faces(_ ids: CString) -> CString{
-    let ids = try! JSONDecoder().decode(BATCH_ImageIds.self, from: ids.toString().data(using: .utf8)!)
+public func ipd_batch_faces(_ ids: CString) -> CString {
+    let idsObject = try! JSONDecoder().decode(BATCH_ImageIds.self, from: ids.toString().data(using: .utf8)!)
     
+    let batchSize = 5
     var arrayOfFaces: [FaceImagesRAW64] = []
+    let group = DispatchGroup()
+    let queue = DispatchQueue.global(qos: .userInitiated)
     
-    for id in ids.ids{
-        arrayOfFaces.append(try! JSONDecoder().decode(FaceImagesRAW64.self, from: ipd_faces(id: id).toString().data(using: .utf8)!))
+    let chunks = idsObject.ids.chunked(into: batchSize)
+    
+    for chunk in chunks {
+        group.enter()
+        queue.async {
+            let chunkFaces = chunk.compactMap { id in
+                try? JSONDecoder().decode(FaceImagesRAW64.self, from: ipd_faces(id: id).toString().data(using: .utf8)!)
+            }
+            arrayOfFaces.append(contentsOf: chunkFaces)
+            group.leave()
+        }
     }
     
-    return CString(BATCH_FaceImagesRAW64(array: arrayOfFaces))
+    group.wait() // Wait for all tasks to complete
+    
+    let returnObject = BATCH_FaceImagesRAW64(array: arrayOfFaces)
+    return CString(returnObject)
 }
 
 @_cdecl("mem_dealloc_ipd")
 public func funcmem_dealloc_ipd(_ id: Int){
-    _ = referenceTable.removeValue(forKey: id)
+    referenceTable.removeValue(forKey: id)
 }
 
 
