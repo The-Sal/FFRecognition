@@ -101,7 +101,6 @@ public class ImageProcessedData{
     init(image: CGImage) {
         self.image = image
         
-        
         var output: [VNFaceObservation] = []
         let imageRequestHandler = VNImageRequestHandler(cgImage: image)
         let rectangleRequest = VNDetectFaceRectanglesRequest { request, error in
@@ -116,9 +115,9 @@ public class ImageProcessedData{
         rectangleRequest.preferBackgroundProcessing = false
         rectangleRequest.revision = VNDetectFaceRectanglesRequestRevision3
         try! imageRequestHandler.perform([rectangleRequest])
-        
+
         self.faces = output
-        
+
     }
     
     

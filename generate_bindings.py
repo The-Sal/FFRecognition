@@ -58,6 +58,11 @@ def main():
     application_support = os.path.join(_application_support_func().decode(), 'ffrecognition')
 
     try:
+        shutil.rmtree(application_support)
+    except FileNotFoundError:
+        pass
+
+    try:
         os.mkdir(application_support)
     except FileExistsError:
         pass
