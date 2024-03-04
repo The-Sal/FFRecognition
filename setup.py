@@ -10,7 +10,7 @@ generate_binding()
 # Set up the package
 setuptools.setup(
     name="ffrecognition",
-    version="0.0.5",
+    version="0.0.6",
     author="Salman",
     packages=setuptools.find_packages(),
     install_requires=[
