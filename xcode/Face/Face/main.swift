@@ -11,7 +11,7 @@ import Foundation
 import Cocoa
 
 
-private let VERSION  = 1.5
+private let VERSION  = 1.6
 
 // MARK: Functions used by the ffrecognition Library to install
 @_cdecl("_install_application_support")
@@ -61,26 +61,17 @@ public func ipd_init_image(_ imagePath: CString) -> Int{
 
 
 @_cdecl("ipd_batch_init_image")
-public func ipd_batch_init_image(_ paths: CString) -> CString {
+public func ipd_batch_init_image(_ paths: CString) -> CString{
     let object = try! JSONDecoder().decode(BATCH_ImagePaths.self, from: paths.toString().data(using: .utf8)!)
-    
-    let batchSize = 5
     var ids: [Int] = []
-    let group = DispatchGroup()
-    let queue = DispatchQueue.global(qos: .userInitiated)
     
-    let chunks = object.paths.chunked(into: batchSize)
     
-    for chunk in chunks {
-        group.enter()
-        queue.async {
-            let chunkIds = chunk.map { ipd_init_image(.init($0)) }
-            ids.append(contentsOf: chunkIds)
-            group.leave()
-        }
+    
+    for path in object.paths{
+        ids.append(ipd_init_image(.init(path)))
     }
     
-    group.wait() // Wait for all tasks to complete
+
     
     let returnObject = BATCH_ImageIds(ids: ids)
     return CString(returnObject)
